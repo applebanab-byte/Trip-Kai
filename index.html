@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>วางแผนทริปกับเพื่อน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f7f9;--card:#fff;--text:#1d2330;--muted:#6b7385;--line:#e4e7ee;
+  --accent:#0f9d8a;--accent-d:#0b7a6b;--danger:#d64545;--pos:#14804a;--neg:#c0392b;--on:#fff;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#11151c;--card:#1a202b;--text:#e9ecf2;--muted:#8d97ab;--line:#2b3342;--accent:#2ec4ac;--accent-d:#5fd8c5;--danger:#ff7676;--pos:#4cd08a;--neg:#ff8a7a;--on:#0d1117}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Noto Sans Thai",system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 80px}
+header{padding:20px 0 8px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font-size:20px;margin:0}
+.who{font-size:13px;color:var(--muted)}
+nav{display:flex;gap:6px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{flex:1;white-space:nowrap}
+button,input,select,textarea{font:inherit;color:inherit}
+button{border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:10px;cursor:pointer}
+button.tab.on,button.primary{background:var(--accent);border-color:var(--accent);color:var(--on)}
+button.primary:hover{background:var(--accent-d)}
+button.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+button.small{padding:3px 10px;font-size:13px}
+button.ghost{border:none;background:none;color:var(--muted);padding:2px 6px}
+button:disabled{opacity:.5;cursor:default}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+textarea{resize:vertical;min-height:60px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0}
+.row{display:flex;gap:10px;align-items:center}
+.row.sp{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.muted{color:var(--muted);font-size:13px}
+.badge{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:12px;color:var(--muted)}
+.rank{font-weight:700;color:var(--accent);min-width:28px}
+.tally{display:flex;gap:12px;font-weight:700;white-space:nowrap}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.bar{display:flex;height:6px;background:var(--bg);border-radius:9px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%}
+.bar .y{background:var(--pos)}.bar .n{background:var(--neg)}
+.vote{display:flex;gap:10px;margin-top:12px}
+.vote button{flex:1;font-weight:700;background:transparent;border:2px solid;transition:background .15s,color .15s}
+.vote .yes{color:var(--pos);border-color:var(--pos)}
+.vote .no{color:var(--neg);border-color:var(--neg)}
+.vote .yes:hover,.vote .yes:active,.vote .yes.on{background:var(--pos);color:var(--on)}
+.vote .no:hover,.vote .no:active,.vote .no.on{background:var(--neg);color:var(--on)}
+.trash{border:none;background:none;color:var(--muted);padding:6px;border-radius:8px;display:inline-flex;line-height:0}
+.trash:hover{color:var(--danger);background:rgba(214,69,69,.12)}
+.trash svg{width:18px;height:18px}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.pick label{display:flex;align-items:center;gap:8px;margin:0;color:var(--text);font-size:15px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.pick label:has(input:checked){border-color:var(--accent);background:rgba(15,157,138,.12);font-weight:700}
+.pick input{width:auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{display:inline-flex;align-items:center;gap:6px;margin:0;color:var(--text);font-size:14px;border:1px solid var(--line);border-radius:99px;padding:4px 12px;cursor:pointer;background:var(--card)}
+.chips input{width:auto}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-size:13px;color:var(--muted);font-weight:500}
+tfoot td{border-bottom:none;font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:28px 0}
+a{color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;z-index:50;max-width:90vw}
+.banner{background:#fff4d6;color:#7a5a00;border-radius:10px;padding:8px 12px;font-size:13px;margin-top:10px}
+.hidden{display:none}
+.overlay{position:fixed;inset:0;background:rgba(10,14,22,.5);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:30;animation:fade .15s}
+.overlay .card{width:100%;max-width:400px;margin:0;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:pop .18s}
+.dlg{text-align:center;padding:24px 20px 18px}
+.dlg p{margin:6px 0 18px}
+.dlg .row{justify-content:center}
+.dlg .row button{min-width:108px}
+.dlg-ic{width:52px;height:52px;border-radius:50%;background:rgba(214,69,69,.14);color:var(--danger);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.dlg-ic svg{width:26px;height:26px}
+@keyframes fade{from{opacity:0}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.96)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🧳 วางแผนทริปกับเพื่อน</h1>
+    <div class="who" id="who"></div>
+  </header>
+  <nav id="nav">
+    <button class="tab on" data-tab="places">สถานที่</button>
+    <button class="tab" data-tab="expenses">ค่าใช้จ่าย</button>
+    <button class="tab" data-tab="settle">สรุปหารเงิน</button>
+  </nav>
+  <div id="banner"></div>
+  <main id="main"></main>
+</div>
+<div id="modal"></div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/* ===== ตั้งค่า ===== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbxXunGMf68D75IVQEEYFeiZ3fbqMHZFHFI03lCYwjzk2_jEw8yDtAmEI4i-SqLuZ_OdQw/exec';
+const PASSCODE = '';   // ต้องตรงกับ PASSCODE ใน Code.gs (ถ้าใช้)
+
+/* โหวตเก็บในคอลัมน์ score ของชีต: 1 = จัดเลย, 2 = ที่อื่นซะ */
+const YES = 1, NO = 2;
+
+/* ===== state ===== */
+const S = { places:[], votes:[], expenses:[], members:[], tab:'places', loading:false };
+const LS = {
+  get(k){ try{ return localStorage.getItem(k) }catch(e){ return null } },
+  set(k,v){ try{ localStorage.setItem(k,v) }catch(e){} }
+};
+const FRIENDS = ['โจนัส','บอม','ฟลุ๊ค','เวฟ','เขต','เอิร์ท'];
+let me = '';   // เลือกใหม่ทุกครั้งที่เข้าเว็บ ไม่จำค่าไว้
+const apiUrl = API_URL;
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n).toLocaleString('th-TH', {maximumFractionDigits:2});
+const CATS = ['กิน','ที่พัก','เดินทาง','กิจกรรม','อื่นๆ'];
+const TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+
+function members(){ return [...new Set([...FRIENDS, ...S.members, ...(me ? [me] : [])])]; }
+
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.remove('hidden');
+  clearTimeout(toast.t); toast.t = setTimeout(()=>t.classList.add('hidden'), 3000);
+}
+
+/* ===== ช่องกรอกจำนวนเงิน (ใส่ , ให้อัตโนมัติ ไม่มีปุ่มเลื่อน) ===== */
+function moneyVal(el){ return Number(String(el.value).replace(/,/g,'')) || 0; }
+function bindMoney(el){
+  el.addEventListener('input', () => {
+    let v = el.value.replace(/[^\d.]/g,'');
+    const i = v.indexOf('.');
+    if(i >= 0) v = v.slice(0,i+1) + v.slice(i+1).replace(/\./g,'').slice(0,2);
+    const [a, b] = v.split('.');
+    const ai = a ? Number(a).toLocaleString('en-US') : '';
+    el.value = b === undefined ? ai : (ai || '0') + '.' + b;
+  });
+}
+
+/* ===== API ===== */
+async function api(action, data){
+  const res = await fetch(apiUrl, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'}, // หลีกเลี่ยง CORS preflight
+    body: JSON.stringify(Object.assign({action, passcode: PASSCODE}, data))
+  });
+  const j = await res.json();
+  if(!j.ok) throw new Error(j.error || 'เกิดข้อผิดพลาด');
+  return j;
+}
+function apply(j){
+  S.places = j.places; S.votes = j.votes; S.expenses = j.expenses; S.members = j.members;
+  render();
+}
+/* optimistic UI: optim() แก้ข้อมูลในหน้าทันที แล้วค่อยส่งไปชีตเบื้องหลัง
+   คำขอเข้าคิวทีละรายการ และใช้ข้อมูลจากชีตทับเมื่อคิวหมดเท่านั้น (กันหน้ากระตุก)
+   ถ้าส่งไม่สำเร็จจะโหลดข้อมูลจริงมาแทนที่ */
+let chain = Promise.resolve(), pending = 0;
+async function call(action, data, okMsg, optim){
+  if(optim){ optim(); render(); }
+  pending++;
+  const p = chain.then(() => api(action, data));
+  chain = p.catch(() => {});
+  try{
+    const j = await p;
+    if(--pending === 0) apply(j);
+    if(okMsg) toast(okMsg);
+    return true;
+  }catch(e){
+    toast('ผิดพลาด: ' + e.message);
+    if(--pending === 0) load(); else render();
+    return false;
+  }
+}
+async function load(){
+  if(!apiUrl) return;
+  S.loading = true; render();
+  try{ apply(await api('getAll')); }
+  catch(e){ toast('โหลดข้อมูลไม่ได้: ' + e.message); }
+  S.loading = false; render();
+}
+
+/* ===== dialogs ===== */
+function askModal(html){ $('#modal').innerHTML = '<div class="overlay"><div class="card">'+html+'</div></div>'; }
+function closeModal(){ $('#modal').innerHTML = ''; }
+
+function confirmBox({title, text, ok='ลบ'}){
+  return new Promise(resolve => {
+    $('#modal').innerHTML = `<div class="overlay"><div class="card dlg" role="alertdialog" aria-modal="true">
+      <div class="dlg-ic">${TRASH}</div><b>${esc(title)}</b><p class="muted">${esc(text)}</p>
+      <div class="row"><button id="dno">ยกเลิก</button><button class="danger" id="dyes">${esc(ok)}</button></div></div></div>`;
+    const done = v => { document.removeEventListener('keydown', onKey); closeModal(); resolve(v); };
+    const onKey = e => { if(e.key === 'Escape') done(false); };
+    document.addEventListener('keydown', onKey);
+    $('#dno').onclick = () => done(false);
+    $('#dyes').onclick = () => done(true);
+    $('.overlay').onclick = e => { if(e.target === e.currentTarget) done(false); };
+    $('#dno').focus();
+  });
+}
+
+function setupName(required){
+  askModal(`
+    <b>คุณคือใคร?</b>
+    <p class="muted">ใช้เป็นชื่อตอนเสนอสถานที่ โหวต และหารเงิน</p>
+    <div class="pick">${FRIENDS.map(n=>`<label><input type="radio" name="who" value="${esc(n)}" ${n===me?'checked':''}><span>${esc(n)}</span></label>`).join('')}</div>
+    <div class="row sp" style="margin-top:14px">
+      ${required ? '<span></span>' : '<button id="cx">ยกเลิก</button>'}<button class="primary" id="ok">ตกลง</button>
+    </div>`);
+  if($('#cx')) $('#cx').onclick = closeModal;
+  $('#ok').onclick = () => {
+    const r = document.querySelector('input[name="who"]:checked');
+    if(!r) return toast('เลือกชื่อของคุณก่อน');
+    me = r.value; closeModal(); render();
+  };
+}
+
+function addMemberBox(){
+  askModal(`
+    <b>เพิ่มเพื่อน</b>
+    <p class="muted">เพิ่มชื่อเพื่อนที่ร่วมทริปเพื่อใช้หารค่าใช้จ่าย</p>
+    <input id="n" placeholder="ชื่อเพื่อน" maxlength="40">
+    <div class="row sp" style="margin-top:14px">
+      <button id="cx">ยกเลิก</button><button class="primary" id="ok">เพิ่ม</button>
+    </div>`);
+  $('#n').focus();
+  const submit = async () => {
+    const n = $('#n').value.replace(/,/g,'').trim();
+    if(!n) return;
+    closeModal();
+    await call('addMember', {name:n}, 'เพิ่มแล้ว', () => { if(!members().includes(n)) S.members.push(n); });
+  };
+  $('#ok').onclick = submit;
+  $('#cx').onclick = closeModal;
+  $('#n').onkeydown = e => { if(e.key === 'Enter') submit(); };
+}
+
+/* ===== คำนวณ ===== */
+function tally(pid){
+  const v = S.votes.filter(x => String(x.placeId) === String(pid));
+  const yes = v.filter(x => Number(x.score) === YES).map(x => x.voter);
+  const no  = v.filter(x => Number(x.score) === NO).map(x => x.voter);
+  return { yes, no, net: yes.length - no.length };
+}
+function myVote(pid){
+  const v = S.votes.find(x => String(x.placeId)===String(pid) && x.voter===me);
+  return v ? Number(v.score) : 0;
+}
+function balances(){
+  const b = {};
+  members().forEach(m => b[m] = 0);
+  S.expenses.forEach(e => {
+    const parts = String(e.participants).split(',').filter(Boolean);
+    if(!parts.length) return;
+    const share = Number(e.amount) / parts.length;
+    b[e.payer] = (b[e.payer]||0) + Number(e.amount);
+    parts.forEach(p => b[p] = (b[p]||0) - share);
+  });
+  return b;
+}
+
+/* ===== render ===== */
+function render(){
+  $('#who').innerHTML = me
+    ? `สวัสดี <b>${esc(me)}</b> <button class="ghost small" id="chg">เปลี่ยน</button>`
+    : '';
+  if($('#chg')) $('#chg').onclick = () => setupName(false);
+  document.querySelectorAll('nav .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+  $('#banner').innerHTML = S.loading ? '<div class="banner">กำลังโหลด…</div>' : '';
+  const m = $('#main');
+  ({places:viewPlaces, expenses:viewExpenses, settle:viewSettle})[S.tab](m);
+}
+
+function viewPlaces(m){
+  const list = S.places.map(p => Object.assign({p}, tally(p.id)))
+    .sort((a,b)=> b.net - a.net || b.yes.length - a.yes.length);
+  m.innerHTML = `
+    <div class="card">
+      <b>เสนอสถานที่ใหม่</b>
+      <label>ชื่อสถานที่</label><input id="pn" maxlength="120" placeholder="เช่น เขาใหญ่">
+      <div class="grid2">
+        <div><label>งบต่อคน (บาท)</label><input id="pb" type="text" inputmode="decimal" placeholder="0"></div>
+        <div><label>ลิงก์ (Google Maps / รีวิว)</label><input id="pl" placeholder="https://..."></div>
+      </div>
+      <label>เหตุผล / รายละเอียด</label><textarea id="pt" maxlength="500"></textarea>
+      <div class="row sp" style="margin-top:12px"><span class="muted">เสนอโดย ${esc(me||'—')}</span><button class="primary" id="addp">เสนอ</button></div>
+    </div>
+    ${list.length ? list.map((x,i)=>placeCard(x,i)).join('') : '<div class="empty">ยังไม่มีสถานที่ เป็นคนแรกที่เสนอเลย!</div>'}`;
+  bindMoney($('#pb'));
+  $('#addp').onclick = async () => {
+    if(!me) return setupName(true);
+    const name = $('#pn').value.trim();
+    if(!name) return toast('ใส่ชื่อสถานที่ก่อน');
+    const link = $('#pl').value.trim();
+    if(link && !/^https?:\/\//i.test(link)) return toast('ลิงก์ต้องขึ้นต้นด้วย http(s)://');
+    $('#addp').disabled = true;
+    const place = {name, link, note:$('#pt').value, budget:moneyVal($('#pb')), proposer:me};
+    await call('addPlace', place, 'เสนอแล้ว', () => S.places.push(Object.assign({id:'tmp'+Date.now()}, place)));
+  };
+  m.querySelectorAll('[data-vote]').forEach(b => b.onclick = async () => {
+    if(!me) return setupName(true);
+    const [pid, sc] = b.dataset.vote.split('|');
+    if(pid.startsWith('tmp')) return toast('กำลังบันทึกสถานที่ รอสักครู่');
+    const score = myVote(pid) === Number(sc) ? 0 : Number(sc);
+    await call('vote', {placeId:pid, voter:me, score}, null, () => {
+      S.votes = S.votes.filter(v => !(String(v.placeId) === pid && v.voter === me));
+      if(score) S.votes.push({placeId:pid, voter:me, score});
+    });
+  });
+  m.querySelectorAll('[data-delp]').forEach(b => b.onclick = async () => {
+    if(b.dataset.delp.startsWith('tmp')) return toast('กำลังบันทึกสถานที่ รอสักครู่');
+    const p = S.places.find(x => String(x.id) === b.dataset.delp);
+    if(await confirmBox({title:'ลบสถานที่นี้?', text:`"${p ? p.name : ''}" และผลโหวตทั้งหมดจะหายไป ย้อนกลับไม่ได้`}))
+      await call('deletePlace', {id:b.dataset.delp}, 'ลบแล้ว', () => {
+        S.places = S.places.filter(x => String(x.id) !== b.dataset.delp);
+        S.votes = S.votes.filter(v => String(v.placeId) !== b.dataset.delp);
+      });
+  });
+}
+function placeCard(x, i){
+  const p = x.p, mine = myVote(p.id);
+  const total = x.yes.length + x.no.length;
+  const safeLink = /^https?:\/\//i.test(p.link) ? p.link : '';
+  return `<div class="card">
+    <div class="row sp">
+      <div class="row"><span class="rank">#${i+1}</span><b>${esc(p.name)}</b></div>
+      <button class="trash" title="ลบ" aria-label="ลบสถานที่" data-delp="${esc(p.id)}">${TRASH}</button>
+    </div>
+    <div class="muted" style="margin:2px 0 6px">
+      เสนอโดย ${esc(p.proposer||'?')}
+      ${Number(p.budget) ? ` · <span class="badge">~${fmt(p.budget)} บาท/คน</span>` : ''}
+      ${safeLink ? ` · <a href="${esc(safeLink)}" target="_blank" rel="noopener noreferrer">เปิดลิงก์</a>` : ''}
+    </div>
+    ${p.note ? `<div>${esc(p.note)}</div>` : ''}
+    <div class="tally" style="margin-top:8px">
+      <span class="pos">จัดเลย ${x.yes.length}</span><span class="neg">ที่อื่นซะ ${x.no.length}</span>
+    </div>
+    <div class="bar">${total ? `<i class="y" style="width:${x.yes.length/total*100}%"></i><i class="n" style="width:${x.no.length/total*100}%"></i>` : ''}</div>
+    <div class="vote">
+      <button class="yes ${mine===YES?'on':''}" data-vote="${esc(p.id)}|${YES}">จัดเลย</button>
+      <button class="no ${mine===NO?'on':''}" data-vote="${esc(p.id)}|${NO}">ที่อื่นซะ</button>
+    </div>
+    ${total ? `<div class="muted" style="margin-top:8px">
+      ${x.yes.length ? `<span class="pos">จัดเลย:</span> ${x.yes.map(esc).join(', ')}` : ''}
+      ${x.yes.length && x.no.length ? '<br>' : ''}
+      ${x.no.length ? `<span class="neg">ที่อื่นซะ:</span> ${x.no.map(esc).join(', ')}` : ''}</div>` : ''}
+  </div>`;
+}
+
+function viewExpenses(m){
+  const total = S.expenses.reduce((a,e)=>a+Number(e.amount),0);
+  const mem = members();
+  m.innerHTML = `
+    <div class="card">
+      <b>บันทึกค่าใช้จ่าย</b>
+      <label>รายการ</label><input id="ed" maxlength="200" placeholder="เช่น ค่าอาหารเย็น">
+      <div class="grid2">
+        <div><label>จำนวนเงิน (บาท)</label><input id="ea" type="text" inputmode="decimal" placeholder="0.00"></div>
+        <div><label>หมวด</label><select id="ec">${CATS.map(c=>`<option>${c}</option>`).join('')}</select></div>
+      </div>
+      <label>ใครจ่าย</label>
+      <select id="ep">${mem.map(n=>`<option ${n===me?'selected':''}>${esc(n)}</option>`).join('')}</select>
+      <label>หารกับใคร</label>
+      <div class="chips" id="eparts">${mem.map(n=>`<label><input type="checkbox" value="${esc(n)}" checked>${esc(n)}</label>`).join('')}</div>
+      <div class="row sp" style="margin-top:12px">
+        <span class="muted">เพื่อนใหม่?</span>
+        <button class="small" id="addm">+ เพิ่มชื่อเพื่อน</button>
+      </div>
+      <div class="row sp" style="margin-top:8px"><span></span><button class="primary" id="adde">บันทึก</button></div>
+    </div>
+    <div class="row sp"><b>รายการทั้งหมด (${S.expenses.length})</b><span class="muted">รวม ${fmt(total)} บาท</span></div>
+    ${S.expenses.length ? S.expenses.slice().reverse().map(e=>{
+      const n = Math.max(1, String(e.participants).split(',').filter(Boolean).length);
+      return `<div class="card">
+        <div class="row sp"><b>${esc(e.desc||'(ไม่มีชื่อ)')}</b>
+          <div class="row" style="gap:4px"><b>${fmt(e.amount)}</b>
+            <button class="trash" title="ลบ" aria-label="ลบรายการ" data-dele="${esc(e.id)}">${TRASH}</button></div></div>
+        <div class="muted">${esc(e.payer)} จ่าย · หาร ${n} คน (${fmt(Number(e.amount)/n)}/คน)
+          · <span class="badge">${esc(e.category||'อื่นๆ')}</span></div>
+      </div>`; }).join('') : '<div class="empty">ยังไม่มีค่าใช้จ่าย</div>'}`;
+  bindMoney($('#ea'));
+  $('#addm').onclick = addMemberBox;
+  $('#adde').onclick = async () => {
+    const parts = [...m.querySelectorAll('#eparts input:checked')].map(i=>i.value);
+    const amount = moneyVal($('#ea'));
+    if(!mem.length) return toast('เพิ่มชื่อสมาชิกก่อน');
+    if(!(amount > 0)) return toast('ใส่จำนวนเงิน');
+    if(!parts.length) return toast('เลือกคนหารอย่างน้อย 1 คน');
+    $('#adde').disabled = true;
+    const exp = {desc:$('#ed').value, amount, payer:$('#ep').value, participants:parts, category:$('#ec').value};
+    await call('addExpense', exp, 'บันทึกแล้ว',
+      () => S.expenses.push(Object.assign({}, exp, {id:'tmp'+Date.now(), participants:parts.join(',')})));
+  };
+  m.querySelectorAll('[data-dele]').forEach(b => b.onclick = async () => {
+    if(b.dataset.dele.startsWith('tmp')) return toast('กำลังบันทึกรายการ รอสักครู่');
+    const e = S.expenses.find(x => String(x.id) === b.dataset.dele);
+    if(await confirmBox({title:'ลบรายการนี้?', text:`"${e ? (e.desc||'ไม่มีชื่อ') : ''}" ${e ? fmt(e.amount) : ''} บาท จะถูกลบและคำนวณยอดใหม่`}))
+      await call('deleteExpense', {id:b.dataset.dele}, 'ลบแล้ว',
+        () => { S.expenses = S.expenses.filter(x => String(x.id) !== b.dataset.dele); });
+  });
+}
+
+function viewSettle(m){
+  const rows = Object.entries(balances()).map(([n,v]) => [n, Math.round(v*100)/100]);
+  const byCat = {};
+  S.expenses.forEach(e => { const c = e.category||'อื่นๆ'; byCat[c] = (byCat[c]||0) + Number(e.amount); });
+  const get = rows.reduce((a,[,v])=>a+(v>0?v:0),0);
+  const pay = rows.reduce((a,[,v])=>a+(v<0?-v:0),0);
+  m.innerHTML = `
+    <div class="card"><b>ยอดสุทธิแต่ละคน</b>
+      ${rows.length ? `<table>
+        <thead><tr><th>ชื่อ</th><th>ต้องได้คืน</th><th>ต้องจ่าย</th></tr></thead>
+        <tbody>${rows.map(([n,v])=>`<tr><td>${esc(n)}</td>
+          <td class="${v>0?'pos':'muted'}">${v>0?fmt(v):'–'}</td>
+          <td class="${v<0?'neg':'muted'}">${v<0?fmt(-v):'–'}</td></tr>`).join('')}</tbody>
+        <tfoot><tr><td>รวม</td><td class="pos">${fmt(get)}</td><td class="neg">${fmt(pay)}</td></tr></tfoot>
+      </table>` : '<div class="empty">ยังไม่มีข้อมูล</div>'}
+      <div class="muted" style="margin-top:8px">หารเท่ากันทุกคนที่เลือกในแต่ละรายการ</div>
+    </div>
+    ${Object.keys(byCat).length ? `<div class="card"><b>แยกตามหมวด</b>${Object.entries(byCat).map(([c,v])=>
+      `<div class="row sp" style="padding:4px 0"><span>${esc(c)}</span><span>${fmt(v)}</span></div>`).join('')}</div>` : ''}
+    <button id="rf">🔄 รีเฟรชข้อมูล</button>`;
+  $('#rf').onclick = load;
+}
+
+/* ===== init ===== */
+$('#nav').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]'); if(!b) return;
+  S.tab = b.dataset.tab; render();
+});
+async function init(){
+  render();
+  setupName(true);   // ทุกครั้งที่เข้าเว็บต้องเลือกว่าเป็นใคร
+  await load();
+  // เพิ่มรายชื่อเพื่อนลงชีต (แท็บ Members) ถ้ายังไม่มี
+  for(const n of FRIENDS)
+    if(!S.members.includes(n)) await call('addMember', {name:n}, null, () => S.members.push(n));
+}
+init();
+// รีเฟรชอัตโนมัติเมื่อกลับมาที่แท็บ (ไม่รีเฟรชถ้ากำลังพิมพ์หรือมีหน้าต่างเปิดอยู่)
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden || !apiUrl || $('#modal').firstChild) return;
+  if(/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')) return;
+  load();
+});
+</script>
+</body>
+</html>
